@@ -1,0 +1,27 @@
+{
+  "name": "eskirex/console",
+  "type": "library",
+  "description": "Eskirex Console Component",
+  "keywords": [],
+  "homepage": "http://www.eskirex.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Eskirex",
+      "email": "eskirex@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1.3"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Eskirex\\Component\\Console\\": "src"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  }
+}
