@@ -2,7 +2,7 @@
 
 namespace Eskirex\Component\Console;
 
-class Add extends Console
+class AddCommand extends Console
 {
     protected $name;
 
@@ -15,9 +15,21 @@ class Add extends Console
     protected $command;
 
 
-    public function __construct($name)
+    public function add()
+    {
+        static::$commands[$this->name] = [
+            'description' => $this->description,
+            'help'        => $this->help,
+            'callback'    => $this->callback
+        ];
+    }
+
+
+    public function name($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
 
@@ -42,15 +54,5 @@ class Add extends Console
         $this->callback = $callback;
 
         return $this;
-    }
-
-
-    public function __destruct()
-    {
-        static::$commands[$this->name] = [
-            'description' => $this->description,
-            'help'        => $this->help,
-            'callback'    => $this->callback
-        ];
     }
 }
