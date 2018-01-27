@@ -1,59 +1,102 @@
 <?php
 
-namespace Eskirex\Component\Console;
+    namespace Eskirex\Component\Console;
 
-class Console
-{
-    static $commands;
+    use Eskirex\Component\Console\Command\CommandManager;
+    use Eskirex\Component\Console\Command\Interfaces\CommandInterface;
+    use Eskirex\Component\Console\Commands\HelpCommand;
+    use Eskirex\Component\Console\Commands\ListCommand;
+    use Eskirex\Component\Console\Output\Translator;
+    use Eskirex\Component\Console\Output\Writer;
+    use Eskirex\Component\Console\Resources\CommandResource;
+    use Eskirex\Component\Console\Resources\Config;
+    use Eskirex\Component\Console\Resources\InputResource;
+    use Eskirex\Component\Console\Input\InputManager;
 
-    static $segments;
-
-
-    protected function commands($key = null)
+    class Console
     {
-        if ($key !== null) {
-            if (isset(static::$commands[$key])) {
-                return static::$commands[$key];
+        public static $name;
+
+        public static $version;
+
+        public static $language;
+
+        /**
+         * @var CommandInterface
+         */
+        private $callback;
+
+
+        public function __construct(string $name = null, string $version = null, string $language = null)
+        {
+            self::$name = $name;
+            self::$version = $version;
+            self::$language = $language;
+        }
+
+
+        public function addCommand($command)
+        {
+            CommandManager::setCallback($command);
+
+            return $this;
+        }
+
+
+        public function run(Input $input, Output $output)
+        {
+            if (!array_key_exists(InputManager::getCommand(), CommandManager::getCommands())) {
+
+                $output->writeIn("<bg_ired><black><b> %error% <reset> : <iblack>%console.error% (" . InputManager::getCommand() . ")<reset>");
+                $output->blank();
+
+                $runList = $output->ask("%console.ask%",
+                    [
+                        '%question.key.yes%' => '%console.option.desc%',
+                        '%question.key.no%'  => '%console.option.desc2%',
+                    ], "%question.key.yes%");
+
+                if ($runList === Translator::getValue('question.key.yes')) {
+                    $command = Configuration::DEFAULT_COMMAND;
+                } else {
+                    exit();
+                }
             }
-        }
 
-        return static::$commands;
-    }
+            if (InputManager::getOption(Configuration::HELP_OPTION) || InputManager::getOption(Configuration::VERSION_OPTION)) {
+                $command = Configuration::DEFAULT_COMMAND;
+            }else{
+                $command = InputManager::getCommand();
 
-
-    protected function segments($key = null)
-    {
-        $args = $_SERVER['argv'] ?? [];
-
-        if (isset($args[0]) && $args[0] == $_SERVER['PHP_SELF']) {
-            array_shift($args);
-        }
-
-        static::$segments = $args;
-
-        if ($key !== null) {
-            if (isset(static::$segments[$key])) {
-                return static::$segments[$key];
             }
 
-            return null;
-        }
-
-        return static::$segments;
-    }
-
-
-    protected function table($array, $showHeader = true)
-    {
-        if (!is_array($array)) {
-            return null;
+            return $this->execute($command, $input, $output);
         }
 
 
-        $table = new Table($array);
+        private function execute(string $command, Input $input, Output $output)
+        {
+            $data = CommandManager::getCommand($command);
+            $callback = CommandManager::getCallback($data['callback']);
 
-        $table->showHeaders($showHeader);
+            return $callback->execute($input, $output);
+        }
 
-        return $table->render(true);
+
+        public static function getName()
+        {
+            return self::$name ?? Translator::getValue('default_application_name');
+        }
+
+
+        public static function getVersion()
+        {
+            return self::$version ?? Translator::getValue('default_application_version');
+        }
+
+
+        public static function getLanguage()
+        {
+            return self::$language ?? Configuration::DEFAULT_LANGUAGE;
+        }
     }
-}
