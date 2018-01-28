@@ -29,7 +29,7 @@
             self::$version = $version;
             self::$language = $language;
 
-            new InfoCommand();
+            $this->addCommand(new InfoCommand());
         }
 
 
