@@ -4,13 +4,9 @@
 
     use Eskirex\Component\Console\Command\CommandManager;
     use Eskirex\Component\Console\Command\Interfaces\CommandInterface;
-    use Eskirex\Component\Console\Commands\HelpCommand;
-    use Eskirex\Component\Console\Commands\ListCommand;
+    use Eskirex\Component\Console\Commands\InfoCommand;
     use Eskirex\Component\Console\Output\Translator;
     use Eskirex\Component\Console\Output\Writer;
-    use Eskirex\Component\Console\Resources\CommandResource;
-    use Eskirex\Component\Console\Resources\Config;
-    use Eskirex\Component\Console\Resources\InputResource;
     use Eskirex\Component\Console\Input\InputManager;
 
     class Console
@@ -32,6 +28,8 @@
             self::$name = $name;
             self::$version = $version;
             self::$language = $language;
+
+            new InfoCommand();
         }
 
 
