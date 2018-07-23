@@ -61,10 +61,15 @@
                 }
             }
 
+
             if (InputManager::getOption(Configuration::HELP_OPTION) || InputManager::getOption(Configuration::VERSION_OPTION)) {
+
                 $command = Configuration::DEFAULT_COMMAND;
             }else{
-                $command = InputManager::getCommand();
+                if (array_key_exists(InputManager::getCommand(), CommandManager::getCommands())) {
+
+                    $command = InputManager::getCommand();
+                }
 
             }
 

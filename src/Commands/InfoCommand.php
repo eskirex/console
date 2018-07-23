@@ -15,19 +15,22 @@
             $this->setName('info')
                 ->setDescription('%info.description%')
                 ->setHelp("%info.help%")
-                ->setVersion('v1.0.0')
-            ;
+                ->setVersion('v1.0.0');
         }
 
 
         public function execute(Input $input, Output $output)
         {
             if (Input\InputManager::getOption(Configuration::HELP_OPTION)) {
-                return $this->help($input, $output);
+                if ($this->help($input, $output)) {
+                    return true;
+                }
             }
 
             if (Input\InputManager::getOption(Configuration::VERSION_OPTION)) {
-                return $this->version($input, $output);
+                if ($this->version($input, $output)) {
+                    return true;
+                }
             }
 
             $cliName = Configuration::NAME;
@@ -112,6 +115,9 @@
         {
             $command = $input->getCommand();
             $commandData = Command\CommandManager::getCommand($command);
+            if (!$commandData) {
+                return null;
+            }
             $output->writeIn($commandData['help']);
             $output->blank();
             $usageWrite = "\n<iyellow>%info.help.usage%<reset>\n  <iblack>{$command}<reset> ";
@@ -155,6 +161,9 @@
         {
             $command = $input->getCommand();
             $commandData = Command\CommandManager::getCommand($command);
+            if (!$commandData) {
+                return null;
+            }
             $version = $commandData['version'] ?? "%info.unknown_version%";
             $output->write("{$input->getCommand()} {$version}");
         }

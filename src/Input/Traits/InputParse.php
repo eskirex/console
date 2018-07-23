@@ -77,7 +77,7 @@
 
             $segments = $_SERVER['argv'];
 
-            if (isset($segments[0]) && $segments[0] == $_SERVER['PHP_SELF']) {
+            if (isset($segments[0]) && ($segments[0] == $_SERVER['PHP_SELF'] || $segments[0] == $_SERVER['SCRIPT_FILENAME'])) {
                 array_shift($segments);
             }
 
